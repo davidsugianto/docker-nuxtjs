@@ -1,0 +1,61 @@
+server {
+  listen 8080;
+  listen [::]:8080;
+
+  root /app/{application_folder_name};
+
+  index index.html;
+
+  server_name {domain_name};
+
+  location / {
+    try_files $uri $uri/ @rewrites;
+  }
+
+  location @rewrites {
+    rewrite ^(.+)$ /index.html last;
+  }
+
+  location ~* \.(?:ico)$ {
+    expires 30d;
+    add_header Cache-Control public;
+    access_log off;
+  }
+  
+  # css and js are tokenized
+  location ~* \.(?:css|js) {
+    expires max;
+    add_header Cache-Control public;
+    access_log off;
+  }
+  
+  # nginx gzip_static does not add Vary header for fonts. 
+  location ~* \.(?:eot|ttf|svg)$ {
+    expires max;
+    add_header Vary Accept-Encoding;
+    add_header Cache-Control public;
+    access_log off;
+  }
+  
+  # woff fonts should not be zipped.
+  location ~* \.(?:woff)$ {
+    expires max;
+    add_header Cache-Control public;
+    access_log off;
+  }
+  
+  
+  # tokenized images can be cached forever 
+  location ~* "\.([a-z0-9]{8})\.(?:gif|png|jpe?g)$" {
+    expires max;
+    add_header Cache-Control public;
+    access_log off;
+  }
+  
+  # non tokenized images only cache for 1 week as they are in my context subject to change.
+  location ~* \.(?:gif|png|jpe?g)$ {
+    expires 1w;
+    add_header Cache-Control public;
+    access_log off;
+  }
+}

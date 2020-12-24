@@ -1,0 +1,69 @@
+version: '3.5'
+
+networks:
+  app-net:
+    driver: bridge
+
+services:
+  nuxt-staging:
+    container_name: nuxt-staging
+    image: node:lts-alpine
+    restart: unless-stopped
+    environment:
+      - 'TZ=${TIMEZONE}'
+      - 'PROJECT_DIR=${NUXT_DIR}-staging'
+      - 'NODE_ENV=${NODE_ENV}'
+      - 'NODE_PORT=${NODE_PORT}'
+      - 'SERVER_PATH_STAGING=${SERVER_PATH_SPA}'
+      - 'SERVER_PATH_PRODUCTION=${SERVER_PATH_SPA}'
+      - 'STAGING_APP=${NUXT_STAGING_APP}'
+      - 'PRODUCTION_APP=${NUXT_PRODUCTION_APP}'
+      - 'BUILD_FLAG=staging'
+    networks:
+      - app-net
+    expose:
+      - '${NODE_PORT}'
+    volumes:
+      - ./public-html:/app:rw
+      - ./scripts:/scripts:rw
+    command: sh -c "chmod -R 777 /scripts && sh /scripts/entrypoint.sh"
+
+  nuxt-production:
+    container_name: nuxt-production
+    image: node:lts-alpine
+    restart: unless-stopped
+    environment:
+      - 'TZ=${TIMEZONE}'
+      - 'PROJECT_DIR=${NUXT_DIR}-production'
+      - 'NODE_ENV=${NODE_ENV}'
+      - 'NODE_PORT=${NODE_PORT}'
+      - 'SERVER_PATH_STAGING=${SERVER_PATH_SPA}'
+      - 'SERVER_PATH_PRODUCTION=${SERVER_PATH_SPA}'
+      - 'STAGING_APP=${NUXT_STAGING_APP}'
+      - 'PRODUCTION_APP=${NUXT_PRODUCTION_APP}'
+      - 'BUILD_FLAG=production'
+    networks:
+      - app-net
+    expose:
+      - '${NODE_PORT}'
+    volumes:
+      - ./public-html:/app:rw
+      - ./scripts:/scripts:rw
+    command: sh -c "chmod -R 777 /scripts && sh /scripts/entrypoint.sh"
+
+  httpd:
+    container_name: httpd
+    image: bitnami/nginx:${NGINX_VERSION}-${OS_VERSION}
+    restart: unless-stopped
+    environment:
+      - 'TZ=${TIMEZONE}'
+    networks:
+      - app-net
+    ports: 
+      - "80:8081"
+      - "443:8443"
+    volumes:
+      - ./public-html:/app:rw
+      - ./config/nginx/nginx.conf:/opt/bitnami/nginx/conf/nginx.conf:ro
+      - ./config/nginx/vhost:/opt/bitnami/nginx/conf/vhosts:rw
+      - ./logs/nginx/${NGINX_VERSION}:/opt/bitnami/nginx/logs:rw
