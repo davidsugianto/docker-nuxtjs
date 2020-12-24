@@ -1,4 +1,4 @@
-# Running application Nuxt Js Application
+# Running Nuxt Js Application in production using Docker
 
 ## OS VERSION
 
