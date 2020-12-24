@@ -1,4 +1,4 @@
-# Setup Web Server use Bitnami Image for Vue Js Application
+# Running application Nuxt Js Application
 
 ## OS VERSION
 
@@ -28,7 +28,3 @@
 > Windows 8/10 OS : edit file C:\Windows\System32\Drives\etc\host
 
 > Linux/Unix OS : edit file /etc/hosts
-
-```
-docker run -it --name kebunpintar -p 3000:3000 -v /run/media/xerox/7950d9a8-d321-44a4-a45e-4ecc195fff2c/Development/IR64-Foundation/kebunpintar/frontend/kebunpintar:/app/kebunpintar node:lts-alpine sh
-```
