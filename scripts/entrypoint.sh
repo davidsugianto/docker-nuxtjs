@@ -5,7 +5,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-apk update && apk add --no-cache curl tzdata git && cd /tmp && \
+apk update && apk add --no-cache curl tzdata git python make g++ && cd /tmp && \
 curl -#L https://github.com/tj/node-prune/releases/download/v1.0.1/node-prune_1.0.1_linux_amd64.tar.gz | tar -xvzf- && \
 mv -v node-prune /usr/local/bin && rm -rvf * && \
 echo "yarn cache clean && node-prune" > /usr/local/bin/node-clean && chmod +x /usr/local/bin/node-clean
@@ -60,7 +60,7 @@ then
     ls -al
     echo "npm install"
     npm install
-    echo "npm run start"
+    echo "npm run start:${BUILD_FLAG}"
     npm run start:${BUILD_FLAG}
   else
     echo "Project not ready for starting, please check your project structure!"
@@ -68,9 +68,10 @@ then
     cd /app/${PROJECT_DIR}
     echo "npm install"
     npm install
-    echo "npm run start"
+    echo "npm run build-${BUILD_FLAG}"
+    npm run build-${BUILD_FLAG}
+    echo "npm run start:${BUILD_FLAG}"
     npm run start:${BUILD_FLAG}
-    ls -al
   fi
 
 else 

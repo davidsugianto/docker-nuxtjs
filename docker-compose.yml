@@ -57,6 +57,9 @@ services:
     restart: unless-stopped
     environment:
       - 'TZ=${TIMEZONE}'
+    depends_on:
+      - nuxt-staging
+      - nuxt-production
     networks:
       - app-net
     ports: 
