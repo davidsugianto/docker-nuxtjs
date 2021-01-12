@@ -55,6 +55,7 @@ services:
     container_name: httpd
     image: bitnami/nginx:${NGINX_VERSION}-${OS_VERSION}
     restart: unless-stopped
+    user: ${ENV_DOCKER_USER}:${ENV_DOCKER_GROUP}
     environment:
       - 'TZ=${TIMEZONE}'
     depends_on:
